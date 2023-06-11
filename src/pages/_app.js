@@ -4,6 +4,8 @@ import { appWithTranslation } from "next-i18next";
 import "core-js";
 // import "@babel/polyfill";
 
+import App from "@/components/App";
+
 import "../styles/globals.scss";
 
 Sentry.init({
@@ -17,8 +19,8 @@ Sentry.init({
   environment: "test",
 });
 
-function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />;
+function MyApp(props) {
+  return <App {...props} />;
 }
 
 export default appWithTranslation(MyApp);
