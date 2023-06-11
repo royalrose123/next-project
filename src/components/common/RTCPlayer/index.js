@@ -1,20 +1,28 @@
-import { useState, useEffect } from "react";
-import styles from "./style.module.scss";
 import classnames from "classnames/bind";
+import { useEffect, useRef } from "react";
+import videojs from "video.js";
+import "video.js/dist/video-js.css";
+
+import styles from "./style.module.scss";
 
 const cx = classnames.bind(styles);
 
-export default function Web() {
+export default function RtcPlayer(props) {
+  const videoRef = useRef(null);
+
   useEffect(() => {
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((localStream) => {
         console.log("localStream 00000", localStream);
         // 創建本地視訊元素，並將本地媒體流綁定到元素
-        const localVideo = document.createElement("video");
-        localVideo.srcObject = localStream;
-        localVideo.autoplay = true;
-        document.body.appendChild(localVideo);
+
+        videojs(videoRef.current, {
+          autoplay: true,
+          muted: true, // 靜音播放
+        });
+
+        videoRef.current.srcObject = localStream;
 
         // 創建RTCPeerConnection對象
         const peerConnection = new RTCPeerConnection();
@@ -32,8 +40,8 @@ export default function Web() {
 
         // 接收遠端媒體流
         peerConnection.ontrack = (event) => {
-          const remoteStream = event.streams[0];
-          remoteVideo.srcObject = remoteStream;
+          // const remoteStream = event.streams[0];
+          // remoteVideo.srcObject = remoteStream;
         };
 
         // 創建SDP交換
@@ -78,5 +86,11 @@ export default function Web() {
       });
   }, []);
 
-  return <div className={cx("web")}> web</div>;
+  return (
+    <div lassName={cx("video-wrapper")}>
+      <div data-vjs-player>
+        <video className={cx("video-js")} ref={videoRef} />
+      </div>
+    </div>
+  );
 }

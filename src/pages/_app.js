@@ -5,10 +5,12 @@ import { Provider } from "react-redux";
 
 import "../styles/globals.scss";
 
-function MyApp({ Component, pageProps }) {
+import App from "@/components/App";
+
+function MyApp(props) {
   return (
     <Provider store={store}>
-      <Component {...pageProps} />
+      <App {...props} />
     </Provider>
   );
 }
