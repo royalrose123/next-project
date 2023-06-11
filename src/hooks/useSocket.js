@@ -1,10 +1,12 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export const useSocket = () => {
+  const socketRef = useRef(null);
+
   useEffect(() => {
     const socket = new WebSocket("ws://localhost:8080");
 
-    console.log("socket", socket);
+    socketRef.current = socket;
 
     socket.addEventListener("open", () => {
       console.log("Connected to WebSocket server");
@@ -20,10 +22,7 @@ export const useSocket = () => {
     socket.addEventListener("close", () => {
       console.log("Disconnected from WebSocket server");
     });
-
-    // 发送消息到服务器
-    function sendMessage(message) {
-      socket.send(message);
-    }
   }, []);
+
+  return { socketRef };
 };

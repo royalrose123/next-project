@@ -1,13 +1,21 @@
 import classnames from "classnames/bind";
 import { useEffect, useRef } from "react";
 import videojs from "video.js";
-import "video.js/dist/video-js.css";
+import { useDispatch } from "react-redux";
+
+// Libs
+import { handleMessageEmit } from "@/methods/handleMessageEmit";
 
 import styles from "./style.module.scss";
+import "video.js/dist/video-js.css";
 
 const cx = classnames.bind(styles);
 
 export default function RtcPlayer(props) {
+  const { socketRef } = props;
+
+  const dispatch = useDispatch();
+
   const videoRef = useRef(null);
 
   useEffect(() => {
@@ -86,8 +94,16 @@ export default function RtcPlayer(props) {
       });
   }, []);
 
+  useEffect(() => {
+    const message = {
+      test: "123",
+    };
+
+    handleMessageEmit({ socketRef, message });
+  }, []);
+
   return (
-    <div lassName={cx("video-wrapper")}>
+    <div className={cx("video-wrapper")}>
       <div data-vjs-player>
         <video className={cx("video-js")} ref={videoRef} />
       </div>
