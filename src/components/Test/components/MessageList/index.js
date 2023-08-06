@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import classnames from "classnames/bind";
 import {
   AutoSizer,
@@ -16,6 +17,7 @@ import styles from "./style.module.scss";
 const cx = classnames.bind(styles);
 
 const cache = new CellMeasurerCache({
+  defaultHeight: 26,
   minHeight: 26,
   fixedWidth: true,
 });
@@ -66,7 +68,9 @@ const messageList = [
 ];
 
 function MessageList(props) {
-  function rowRenderer({ index, isScrolling, key, parent, style }) {
+  const listRef = useRef(null);
+
+  const rowRenderer = ({ index, key, parent, style }) => {
     return (
       <CellMeasurer
         cache={cache}
@@ -83,16 +87,38 @@ function MessageList(props) {
         </div>
       </CellMeasurer>
     );
-  }
+  };
+
+  useEffect(() => {
+    const handleResize = () => {
+      cache.clearAll();
+      listRef.current.recomputeRowHeights();
+    };
+
+    if (listRef.current) {
+      window.addEventListener("resize", handleResize);
+    }
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
     <div className={cx("messageList")}>
       <AutoSizer>
         {({ width, height }) => (
           <List
+            ref={listRef}
             width={width}
             height={height}
             rowCount={messageList.length}
-            rowHeight={cache.rowHeight}
+            rowHeight={({ index }) => {
+              return (
+                cache._rowHeightCache[`${index}-0`] + 10 ||
+                cache.rowHeight(index) + 10
+              );
+            }}
             rowRenderer={rowRenderer}
             deferredMeasurementCache={cache}
           />
