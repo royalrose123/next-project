@@ -1,0 +1,15 @@
+.messageList {
+  width: 260px;
+  height: 480px;
+  max-height: 480px;
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 10px;
+  overflow-y: auto;
+
+  &-item {
+    &:not(:last-of-type) {
+      margin-bottom: 10px;
+    }
+  }
+}
